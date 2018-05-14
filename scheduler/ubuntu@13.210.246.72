@@ -1,0 +1,42 @@
+import time
+from json import dumps as json_dumps
+from requests import post as requests_post
+
+
+
+def lambda_handler(event, context):
+
+    headers = {'key': "85e94778-c56e-484c-ae4b-3dd3b513663a"}
+
+    bots = ["cryptobot"] #do these at tuples with botname and APIkey
+    lines = ["what is the price of ETH",
+        "what is the price of BTC"]
+
+    TIMEOUT = 60 #(s)
+    URL = "https://platform.hut34.io/botquery?platform=gen&key=43fa344b10e440a381200acfe22e3662"
+    params = {"platform" : "gen",
+        "key" : "43fa344b10e440a381200acfe22e3662"} #can feed this into request as params, it will form up after ?
+    
+    price_list = []
+
+    for x in range(0,TIMEOUT):
+        print(x)
+        for bot in bots:
+            inner_list = []
+
+            # iterate over all requests
+            for line in lines:
+                payload = json_dumps({"message": "@" + bot + " " + line}) #convert dict to str
+                response = requests_post(URL, data = payload) # do post
+                a =dict((k, response.json()[k]) for k in ["timestamp","message"]) # just extact timestamp and message
+                inner_list.append(a) #collect the responses in a list
+
+        price_list = price_list + inner_list #join the lists together
+        #time.sleep(1)
+
+# output the info
+    with open("prices.txt","w+") as f:
+        f.write(str(price_list))
+
+# Mains
+lambda_handler("request","message")
