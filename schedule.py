@@ -39,21 +39,20 @@ def lambda_handler(event, context):
                 # Build and make request
                 payload = json.dumps({"message": "@" + bot + " " + line}) #convert dict to str
                 response = requests.post(URL, data = payload) # do post
-                
                 # Process request
                 # Send to hut34 Firebase
                 params = {"botid":"cryptobot"}
                 # make my own payload with
                 payload = response.json()
-                payload["timestamp"] = round(time.time())
-                payload["price"] = str(response.json()["message"].split("$")[1])
-                payload["ticker"] = str(line.split("of")[1])
-                payload["source"] = "cryptobot"
+                print(payload)
+                # payload["timestamp"] = round(time.time())
+                # payload["price"] = str(response.json()["message"].split("$")[1])
+                # payload["ticker"] = str(line.split("of")[1])
+                # payload["source"] = "cryptobot"
                 r = requests.post(STREAM, 
                     headers = auth, 
                     params = params, 
                     data = payload)
-                
         time.sleep(60) #wait for 1 min
 
 # Mains
